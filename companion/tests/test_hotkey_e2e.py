@@ -5,7 +5,7 @@
 模拟设备发包(hello/start/10块正弦ADPCM/end) → 收钩子 → 断言右Shift
 按下+抬起且带 INJECTED 标志。
 
-用法: .venv/Scripts/python.exe tests/test_hotkey_e2e.py
+用法: python tests/test_hotkey_e2e.py
 """
 import ctypes
 import ctypes.wintypes
@@ -122,8 +122,8 @@ def main():
     base = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
     env = dict(os.environ, PYTHONUNBUFFERED="1")
     fwd = subprocess.Popen(
-        [os.path.join(base, ".venv/Scripts/python.exe"),
-         os.path.join(base, "hotkey_forwarder.py")],
+        [sys.executable, os.path.join(base, "hotkey_forwarder.py"),
+         "--no-audio", "--key", "right-shift", "--mode", "tap"],
         cwd=base, env=env)
     time.sleep(3)
     try:

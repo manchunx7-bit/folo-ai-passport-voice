@@ -29,17 +29,28 @@
 
 ## 日常使用
 
-1. 电脑:运行 `companion\.venv\Scripts\python.exe companion\hotkey_forwarder.py`
-   (保持窗口开着;它与 relay.py 二选一,不要同时跑,端口冲突);
+### 电脑自己的麦克风收音（当前推荐）
+
+1. 双击 `companion\start_hotkey_only.cmd`。这个入口不需要虚拟声卡，也不依赖
+   项目中已经失效的旧 `.venv`；
 2. 设备:进入「AI语音」应用 → 自动连接(几秒内);
-3. **按住设备 UP 键说话,松开结束** —— 电脑光标处出字。
+3. 按下设备 **UP** 时点击一次右 Shift，松开时再点击一次右 Shift，结束输入法
+   的“正在识别”状态并提交文字；设备 **DOWN** 会注入一次 Enter，用于确认或
+   发送当前输入框内容。
+
+转发器必须保持运行；它与 `relay.py` 二选一，不能同时占用 UDP 33333。
+
+### 使用设备麦克风无线收音
+
+如果需要把设备麦克风音频送进输入法，不加 `--no-audio` 启动，并按“首次安装”
+章节安装 VB-Cable 与 `sounddevice`。输入法麦克风需选择 CABLE Output。
 
 ## 命令行参数
 
 | 参数 | 默认 | 说明 |
 | --- | --- | --- |
 | `--key` | right-shift | 注入的热键(right-shift/left-shift/right-ctrl/right-alt/f6/f9/f10) |
-| `--mode` | tap | tap=按下时点击热键;hold=按住期间热键保持按下 |
+| `--mode` | tap（当前配置） | tap=按下和松开时各点击一次热键;hold=设备按住期间热键保持按下 |
 | `--port` | 33333 | UDP 端口(与固件契约一致,勿改) |
 | `--output-substr` | CABLE Input | 虚拟声卡播放设备名匹配子串 |
 | `--no-audio` | 关 | 只转发热键 |
@@ -47,11 +58,14 @@
 
 ## 自测
 
+不触碰真实桌面的映射单测：
+
 ```
-companion\.venv\Scripts\python.exe companion\tests\test_hotkey_e2e.py
+%LocalAppData%\Programs\Python\Python311\python.exe -m unittest companion\tests\test_hotkey_forwarder_unit.py -v
 ```
-自动起一个转发器 + 模拟设备发包,用键盘钩子断言右 Shift 注入(带 INJECTED
-标志)。PASS = 链路正常。
+
+它会验证 UP → 右 Shift 按下/抬起、DOWN → 单次 Enter，以及 `--no-audio`
+收到设备音频包时不会崩溃。
 
 ## 常见问题
 

@@ -16,7 +16,7 @@ class ForwarderDispatchTest(unittest.TestCase):
     def setUp(self):
         args = argparse.Namespace(
             key="right-shift",
-            mode="hold",
+            mode="tap",
             no_audio=True,
             output_substr="CABLE Input",
         )
@@ -26,16 +26,22 @@ class ForwarderDispatchTest(unittest.TestCase):
     def event(name, **fields):
         return (json.dumps({"event": name, **fields}) + "\n").encode("utf-8")
 
-    def test_up_ptt_maps_to_right_shift_down_and_up(self):
+    def test_up_ptt_clicks_right_shift_at_start_and_again_at_release(self):
         sent = []
-        with mock.patch.object(h, "_send_key", side_effect=lambda *a, **kw: sent.append((a, kw))):
+        with mock.patch.object(h, "_send_key", side_effect=lambda *a, **kw: sent.append((a, kw))), \
+             mock.patch.object(h.time, "sleep"):
             self.forwarder.on_event(self.event("voice.start"))
             self.forwarder.on_event(self.event("voice.end"))
 
+        self.assertEqual(len(sent), 4)
         self.assertEqual(sent[0][0][:3], h.KEY_MAP["right-shift"])
         self.assertFalse(sent[0][1]["up"])
         self.assertEqual(sent[1][0][:3], h.KEY_MAP["right-shift"])
         self.assertTrue(sent[1][1]["up"])
+        self.assertEqual(sent[2][0][:3], h.KEY_MAP["right-shift"])
+        self.assertFalse(sent[2][1]["up"])
+        self.assertEqual(sent[3][0][:3], h.KEY_MAP["right-shift"])
+        self.assertTrue(sent[3][1]["up"])
 
     def test_down_maps_to_single_enter_click(self):
         sent = []
