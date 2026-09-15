@@ -350,6 +350,9 @@ class Forwarder:
     def __init__(self, args):
         self.args = args
         self.injector = KeyInjector(args.key, args.mode)
+        # 设备 DOWN 短按发 key.action=enter。它不是语音 PTT 的一部分，
+        # 必须始终是一次独立点击，不能复用 hold/tap 模式的主热键实例。
+        self.enter_injector = KeyInjector("enter", "tap")
         self.sink = None if args.no_audio else AudioSink(args.output_substr)
 
     def on_event(self, payload):
@@ -366,11 +369,15 @@ class Forwarder:
             self.injector.stop()
         elif name == "device.hello":
             print("[evt] 设备上线(device.hello)")
+        elif name == "key.action" and ev.get("action") == "enter":
+            print("[evt] 设备确认发送(key.action=enter)")
+            self.enter_injector.start()
         # status/agent.* 等其余事件与本程序无关,忽略
 
     def on_audio(self, payload):
         # 载荷 = [seq][0x80] + 804B ADPCM block;去掉 2B 帧头再解码
-        if len(payload) > 2:
+        # --no-audio 模式下电脑使用自己的麦克风，设备音频包直接丢弃。
+        if self.sink is not None and len(payload) > 2:
             self.sink.write_block(payload[2:])
 
     def on_disconnect(self):

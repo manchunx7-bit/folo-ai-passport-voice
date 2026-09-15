@@ -1,3 +1,10 @@
 @echo off
-cd /d "F:\WORK\AI硬件\folo-ai-passport-voice\companion"
-"F:\WORK\AI硬件\folo-ai-passport-voice\companion\.venv\Scripts\python.exe" -u "F:\WORK\AI硬件\folo-ai-passport-voice\companion\hotkey_forwarder.py" > "F:\WORK\AI硬件\folo-ai-passport-voice\companion\hotkey_forwarder.log" 2>&1
+setlocal
+cd /d "%~dp0"
+set "LOCAL_PYTHON=%LocalAppData%\Programs\Python\Python311\python.exe"
+
+if exist "%LOCAL_PYTHON%" (
+  "%LOCAL_PYTHON%" -u "%~dp0hotkey_forwarder.py" --no-audio --key right-shift --mode hold > "%~dp0hotkey_forwarder.log" 2>&1
+) else (
+  py -3 -u "%~dp0hotkey_forwarder.py" --no-audio --key right-shift --mode hold > "%~dp0hotkey_forwarder.log" 2>&1
+)
