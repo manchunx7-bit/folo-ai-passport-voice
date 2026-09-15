@@ -13,7 +13,7 @@ import sys
 # 向导管理的 config 白名单字段(其他字段原样保留, 含密钥)
 WIZARD_FIELDS = ("channel", "inject_mode", "inject_focus_delay", "usb_port")
 
-VALID_CHANNELS = ("ble", "usb")
+VALID_CHANNELS = ("ble", "usb", "wifi")
 VALID_INJECT_MODES = ("auto", "unicode", "clipboard")
 
 # 页面状态机: 合法迁移集合(纯函数校验)
@@ -59,13 +59,27 @@ def config_path():
     return os.path.join(config_dir(), "config.local.json")
 
 
+def _atomic_write_json(path, data):
+    """原子化写入 JSON 文件: 写同目录 .tmp 文件后 os.replace 替换, 防止进程崩溃截断为 0 字节。"""
+    d = os.path.dirname(path)
+    if d and not os.path.exists(d):
+        os.makedirs(d, exist_ok=True)
+    tmp_path = path + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, path)
+
+
 def load_or_default_cfg():
     """读 config.local.json; 缺失/损坏时返回空 dict(写入时才落盘)。"""
     p = config_path()
     if not os.path.exists(p):
         return {}
     try:
-        with open(p, "r", encoding="utf-8") as f:
+        with open(p, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     except (ValueError, OSError):
         return {}
@@ -74,7 +88,7 @@ def load_or_default_cfg():
 def validate_channel(v):
     if v not in VALID_CHANNELS:
         raise ValueError(
-            f"channel 值无效: {v!r}(WiFi 通道已移除, 请改为 \"ble\" 或 \"usb\")")
+            f"channel 值无效: {v!r}(应为 \"ble\"、\"usb\" 或 \"wifi\")")
 
 
 def validate_inject_mode(v):
@@ -99,10 +113,7 @@ def write_cfg(cfg):
             elif k == "inject_mode":
                 validate_inject_mode(v)
             merged[k] = v
-    p = config_path()
-    with open(p, "w", encoding="utf-8") as f:
-        json.dump(merged, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    _atomic_write_json(config_path(), merged)
     return merged
 
 
@@ -118,10 +129,7 @@ def write_asr_cfg(key):
         raise ValueError("火山 API Key 不能为空")
     merged = load_or_default_cfg()
     merged["volcano_api_key"] = key
-    p = config_path()
-    with open(p, "w", encoding="utf-8") as f:
-        json.dump(merged, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    _atomic_write_json(config_path(), merged)
     return merged
 
 

@@ -67,7 +67,7 @@ def test_write_cfg_from_empty():
 
 def test_validate_fields():
     """channel/inject_mode 非法值拒绝(文案与 relay 一致)。"""
-    for bad in ("BLE", "", "serial", "wifi", 3):
+    for bad in ("BLE", "", "serial", "ethernet", 3):
         try:
             fre_state.validate_channel(bad)
             check(f"channel 非法 {bad!r} 拒绝", False, True)
@@ -80,6 +80,7 @@ def test_validate_fields():
         except ValueError as e:
             check(f"inject_mode 非法 {bad!r} 拒绝", "inject_mode" in str(e), True)
     fre_state.validate_channel("usb")
+    fre_state.validate_channel("wifi")
     fre_state.validate_inject_mode("clipboard")
     check("合法值放行", True, True)
 

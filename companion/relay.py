@@ -372,7 +372,7 @@ class Relay:
 
     def __init__(self, transport=None, *, asr_factory=None, inject_fn=None,
                  key_action_fn=None, on_phase=None, on_candidate=None,
-                 timeout=60.0, do_inject=True, do_approval=True, dry_run=False,
+                 timeout=60.0, do_inject=True, do_approval=False, dry_run=False,
                  connect_timeout_s=5.0, stdin_input=None):
         from asr_client import StreamingASR
         from inject import paste_text, key_action
@@ -1185,7 +1185,10 @@ def _build_transport(cfg):
 
     - "ble"(缺省): bleak BLE 直连, macOS/Windows 蓝牙均可;
     - "usb": USB 有线直连(设备 mode usb), SerialTransport 扫描
-      VID 0x303A/PID 0x1001; config usb_port 非空 = 直连端口(不扫描)。
+      VID 0x303A/PID 0x1001; config usb_port 非空 = 直连端口(不扫描);
+    - "wifi": Wi-Fi UDP(设备与电脑同一局域网), UdpTransport 监听 UDP
+      33333 并每 1s 广播 beacon, 设备听到后主动 hello。
+      契约见 passport-os/docs/voice-udp-channel.md。
     """
     channel = cfg.get("channel", "ble")
     if channel == "ble":
@@ -1193,9 +1196,12 @@ def _build_transport(cfg):
     if channel == "usb":
         from serial_transport import SerialTransport
         return SerialTransport(port=cfg.get("usb_port") or None)
+    if channel == "wifi":
+        from udp_transport import UdpTransport
+        return UdpTransport(port=cfg.get("udp_port") or None)
     raise RelayError(
         f"config.local.json 的 channel 值无效: {channel!r}"
-        f"(WiFi 通道已移除, 请改为 \"ble\" 或 \"usb\")")
+        f"(应为 \"ble\"、\"usb\" 或 \"wifi\")")
 
 
 INJECT_FOCUS_DELAY_DEFAULT = 2.0
@@ -1267,8 +1273,10 @@ def main():
                          "/ USB VID 0x303A)")
     ap.add_argument("--no-inject", action="store_true",
                     help="只转写不注入(调试)")
+    ap.add_argument("--approval", "--demo-approval", action="store_true",
+                    help="开启模拟审批演示(向设备发 approval_request, 默认关闭)")
     ap.add_argument("--no-approval", action="store_true",
-                    help="关闭审批演示(不发 approval_request)")
+                    help="关闭审批演示")
     ap.add_argument("--timeout", type=float, default=60.0,
                     help="等待 ASR 最终结果/审批决策的超时(秒)")
     ap.add_argument("--dry-run", action="store_true",
@@ -1283,7 +1291,7 @@ def main():
         key_action_fn=_default_key_action_fn(cfg),
         timeout=args.timeout,
         do_inject=not (args.no_inject or args.dry_run),
-        do_approval=not args.no_approval,
+        do_approval=args.approval and not args.no_approval,
         dry_run=args.dry_run,
     )
     try:

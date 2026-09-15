@@ -19,3 +19,6 @@ pystray>=0.19
 ttkbootstrap>=1.10
 # Pillow: pystray 托盘图标运行时绘制(PIL.Image)
 Pillow>=10.0
+# 热键+麦克风转发器(见 HOTKEY_FORWARDER.md)
+# 热键+麦克风转发器依赖(见 companion/HOTKEY_FORWARDER.md)
+sounddevice>=0.4.6
