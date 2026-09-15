@@ -58,6 +58,13 @@ class ForwarderDispatchTest(unittest.TestCase):
     def test_no_audio_mode_discards_device_audio(self):
         self.forwarder.on_audio(b"\x01\x80payload")
 
+    def test_disconnect_without_active_session_does_not_inject_shift(self):
+        sent = []
+        with mock.patch.object(h, "_send_key", side_effect=lambda *a, **kw: sent.append((a, kw))), \
+             mock.patch.object(h.time, "sleep"):
+            self.forwarder.on_disconnect()
+        self.assertEqual(sent, [])
+
 
 if __name__ == "__main__":
     unittest.main()

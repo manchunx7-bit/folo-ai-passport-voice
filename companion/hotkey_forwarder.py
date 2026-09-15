@@ -207,6 +207,7 @@ class KeyInjector:
         self.mode = mode
         self._keys = resolve_key_spec(spec)   # [(键名, vk, scan, ext), ...]
         self._held = False
+        self._active = False
 
     def start(self):
         attach_to_default_desktop()
@@ -217,6 +218,9 @@ class KeyInjector:
                     _send_key(vk, scan, ext, up=False)
                 print(f"[key] {self.spec} 按下(hold, 开启语音输入)")
         else:
+            if self._active:
+                return
+            self._active = True
             for _name, vk, scan, ext in self._keys:
                 _send_key(vk, scan, ext, up=False)
             time.sleep(0.06)
@@ -231,8 +235,9 @@ class KeyInjector:
             for _name, vk, scan, ext in reversed(self._keys):
                 _send_key(vk, scan, ext, up=True)
             print(f"[key] {self.spec} 抬起(hold, 结束语音输入)")
-        elif self.mode == "tap":
+        elif self.mode == "tap" and self._active:
             # 满足输入法"按下可开启语音输入，按任意键均可结束"：松开按键时再发一次点击以提交上屏
+            self._active = False
             time.sleep(0.08)
             for _name, vk, scan, ext in self._keys:
                 _send_key(vk, scan, ext, up=False)
@@ -354,6 +359,7 @@ class Forwarder:
         # 必须始终是一次独立点击，不能复用 hold/tap 模式的主热键实例。
         self.enter_injector = KeyInjector("enter", "tap")
         self.sink = None if args.no_audio else AudioSink(args.output_substr)
+        self.audio_blocks = 0
 
     def on_event(self, payload):
         try:
@@ -363,9 +369,10 @@ class Forwarder:
         name = ev.get("event", "")
         if name == "voice.start":
             print("[evt] 设备开始说话(voice.start)")
+            self.audio_blocks = 0
             self.injector.start()
         elif name == "voice.end":
-            print("[evt] 设备结束说话(voice.end)")
+            print(f"[evt] 设备结束说话(voice.end),收到音频块={self.audio_blocks}")
             self.injector.stop()
         elif name == "device.hello":
             print("[evt] 设备上线(device.hello)")
@@ -379,6 +386,9 @@ class Forwarder:
         # --no-audio 模式下电脑使用自己的麦克风，设备音频包直接丢弃。
         if self.sink is not None and len(payload) > 2:
             self.sink.write_block(payload[2:])
+            self.audio_blocks += 1
+            if self.audio_blocks == 1:
+                print("[audio] 已收到设备首个音频块并写入 VB-Cable")
 
     def on_disconnect(self):
         print("[link] 设备断开,热键复位;等待 beacon 自动重连...")
