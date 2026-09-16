@@ -32,6 +32,15 @@ import sys
 import threading
 import time
 
+# GitHub Windows runners and some legacy consoles default to cp1252.  Chinese
+# status messages must never crash the forwarding loop or its release tests.
+for _stream in (sys.stdout, sys.stderr):
+    if getattr(_stream, "encoding", "").lower() not in ("utf-8", "utf8"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, OSError):
+            pass
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import adpcm
