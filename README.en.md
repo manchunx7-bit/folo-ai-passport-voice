@@ -92,8 +92,9 @@ Data flow: the device captures 16 kHz audio → streams 100 ms frames up over **
 
 **Use the packaged client (recommended — no terminal needed for end users)**:
 
-- **macOS**: download [AI-Passport-macOS.dmg](https://github.com/zhaohuaxiaoy/folo-ai-passport-voice/releases/latest) (drag into /Applications)
-- **Windows**: download [AI-Passport-Windows.exe](https://github.com/zhaohuaxiaoy/folo-ai-passport-voice/releases/latest) (run directly)
+- **macOS**: download [AI-Passport-macOS.dmg](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest) (drag into /Applications)
+- **Windows full client**: download [AI-Passport-Windows.exe](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest) (Volcano ASR + text injection)
+- **Windows hardware-mic hotkey bridge**: download [AI-Passport-Hotkey-Windows.exe](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest) (no ASR key required; VB-Cable required)
 
 Releases are built automatically for both platforms by GitHub Actions (`v*` tag triggers; see `.github/workflows/build-apps.yml`). To build yourself: on macOS run `companion/.venv/bin/python companion/build/pack.py --dmg`; Windows builds require a Windows machine (`python build/pack.py` → `dist/AI Passport.exe`).
 

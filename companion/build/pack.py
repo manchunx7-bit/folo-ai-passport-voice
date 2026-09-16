@@ -3,11 +3,13 @@
 
 Mac:  dist/AI Passport.app (ad-hoc 签名) + dist/AI Passport.dmg (可选)
 Win:  dist/AI Passport.exe
+      dist/AI Passport Hotkey.exe (--hotkey, 硬件麦克风+按键转发器)
 
 用法(在 companion/ 目录):
   python3 build/pack.py                 # 当前平台默认产物
   python3 build/pack.py --dmg           # Mac 额外产出 dmg
   python3 build/pack.py --name "AI Passport 1.0"
+  python build/pack.py --hotkey       # Windows 热键/硬件麦克风独立程序
 
 依赖: pip install pyinstaller(构建机, 非运行时)。
 注意: bleak 后端懒加载(winrt/CoreBluetooth)必须 collect-submodules;
@@ -32,6 +34,7 @@ if getattr(sys.stdout, "encoding", "").lower() not in ("utf-8", "utf8"):
 APP_NAME = "AI Passport"
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENTRY = os.path.join(HERE, "fre_app.py")
+HOTKEY_ENTRY = os.path.join(HERE, "hotkey_forwarder.py")
 DIST = os.path.join(HERE, "dist")
 
 # pyinstaller 需要收集的懒加载/框架模块
@@ -74,18 +77,26 @@ def _patch_info_plist(app_path):
     print(f"✓ Info.plist 已补蓝牙用途声明+bundle id: {plist_path}")
 
 
-def build(app_name):
+def build(app_name, entry=ENTRY, windowed=True):
     cmd = [sys.executable, "-m", "PyInstaller",
-           "--noconfirm", "--clean", "--windowed",
+           "--noconfirm", "--clean"]
+    # 热键转发器保留控制台，便于用户看到声卡、网络和防火墙错误；
+    # 桌面向导继续使用无控制台窗口模式。
+    cmd += ["--windowed" if windowed else "--console",
            "--name", app_name,
            "--distpath", DIST,
            "--workpath", os.path.join(HERE, "build", "pyinstaller-work"),
            "--specpath", os.path.join(HERE, "build")]
-    for m in COLLECT_SUBMODULES:
-        cmd += ["--collect-submodules", m]
-    for m in COLLECT_DATA:
-        cmd += ["--collect-data", m]
-    if sys.platform == "darwin":
+    # 桌面向导依赖 BLE、托盘和 Tk 主题的动态导入；热键转发器只依赖
+    # UDP、NumPy、sounddevice，PyInstaller 的静态分析和官方 hook 足够。
+    # 分开收集可避免把整套 GUI/BLE 依赖塞进热键 EXE。
+    is_hotkey = os.path.abspath(entry) == os.path.abspath(HOTKEY_ENTRY)
+    if not is_hotkey:
+        for m in COLLECT_SUBMODULES:
+            cmd += ["--collect-submodules", m]
+        for m in COLLECT_DATA:
+            cmd += ["--collect-data", m]
+    if sys.platform == "darwin" and not is_hotkey:
         for m in COLLECT_ALL_DARWIN:
             cmd += ["--collect-all", m]
     else:
@@ -93,7 +104,7 @@ def build(app_name):
         # 单 exe → CI 上传失败。--onefile 产出 dist/AI Passport.exe 单文件
         # (发布下载体验:用户拿一个 exe 即可;代价是启动时解压到临时目录)。
         cmd += ["--onefile"]
-    cmd.append(ENTRY)
+    cmd.append(entry)
     p = _run(cmd)
     if p.returncode != 0:
         sys.exit(f"pyinstaller 失败(rc={p.returncode})")
@@ -142,11 +153,20 @@ def make_dmg(app_name):
 def main():
     ap = argparse.ArgumentParser(description="打包 AI Passport 向导")
     ap.add_argument("--dmg", action="store_true", help="Mac 额外产出 dmg")
-    ap.add_argument("--name", default=APP_NAME, help="产物名(默认 AI Passport)")
+    ap.add_argument("--hotkey", action="store_true",
+                    help="打包 Windows 硬件麦克风+热键转发器")
+    ap.add_argument("--name", help="产物名")
     args = ap.parse_args()
-    build(args.name)
+    if args.hotkey and sys.platform != "win32":
+        ap.error("--hotkey 仅支持 Windows")
+    if args.hotkey and args.dmg:
+        ap.error("--hotkey 不能与 --dmg 同时使用")
+    app_name = args.name or ("AI Passport Hotkey" if args.hotkey else APP_NAME)
+    build(app_name,
+          entry=HOTKEY_ENTRY if args.hotkey else ENTRY,
+          windowed=not args.hotkey)
     if args.dmg:
-        make_dmg(args.name)
+        make_dmg(app_name)
     print("✓ 产物目录:", DIST)
 
 

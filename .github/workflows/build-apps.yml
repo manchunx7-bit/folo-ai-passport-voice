@@ -34,13 +34,19 @@ jobs:
           pip install pyinstaller
           pip install -r companion/requirements.txt
 
+      - name: Test Windows hotkey forwarder
+        if: runner.os == 'Windows'
+        run: python -m unittest companion.tests.test_hotkey_forwarder_unit -v
+
       - name: Build (macOS)
         if: runner.os == 'macOS'
         run: python companion/build/pack.py --dmg
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
-        run: python companion/build/pack.py
+        run: |
+          python companion/build/pack.py
+          python companion/build/pack.py --hotkey
 
       - name: Stage macOS artifact
         if: runner.os == 'macOS'
@@ -48,16 +54,38 @@ jobs:
 
       - name: Stage Windows artifact
         if: runner.os == 'Windows'
-        run: cp "companion/dist/AI Passport.exe" "AI-Passport-Windows.exe"
+        shell: pwsh
+        run: |
+          Copy-Item "companion/dist/AI Passport.exe" "AI-Passport-Windows.exe"
+          Copy-Item "companion/dist/AI Passport Hotkey.exe" "AI-Passport-Hotkey-Windows.exe"
+
+      # 手动运行时也能在 Actions 页面下载；打 tag 时再同步到 Release。
+      - name: Upload workflow artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Passport-macOS
+          path: AI-Passport-macOS.dmg
+
+      - name: Upload workflow artifacts (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Passport-Windows
+          path: |
+            AI-Passport-Windows.exe
+            AI-Passport-Hotkey-Windows.exe
 
       - name: Upload release asset (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           files: AI-Passport-macOS.dmg
 
       - name: Upload release asset (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: AI-Passport-Windows.exe
+          files: |
+            AI-Passport-Windows.exe
+            AI-Passport-Hotkey-Windows.exe

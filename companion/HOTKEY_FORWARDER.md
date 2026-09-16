@@ -14,11 +14,15 @@
 
 1. **安装虚拟声卡**(麦克风路由必需):到 https://vb-audio.com/Cable/ 下载
    `VB-CABLE_Driver`,解压后右键管理员运行 `VBCABLE_Setup_x64.exe`,安装完重启。
-2. 安装依赖(companion 目录):
+2. 在本项目 GitHub Release 下载 `AI-Passport-Hotkey-Windows.exe`。它不包含
+   API Key、Wi-Fi 密码或作者的本地配置，也不要求用户安装 Python。
+3. 如果从源码运行，则安装依赖(companion 目录):
    ```
    companion\.venv\Scripts\python.exe -m pip install sounddevice
    ```
-3. 验证设备已识别: `companion\.venv\Scripts\python.exe hotkey_forwarder.py --list-devices`
+4. 验证设备已识别：运行
+   `AI-Passport-Hotkey-Windows.exe --list-devices`；源码方式则运行
+   `companion\.venv\Scripts\python.exe hotkey_forwarder.py --list-devices`。
    列表里出现 **CABLE Input**(播放)即虚拟声卡就绪。
 
 ## 输入法配置(一次性)
@@ -32,14 +36,16 @@
 ### 使用设备麦克风无线收音（当前模式）
 
 1. 确认 Windows 已安装 VB-Cable，输入法的麦克风选择 `CABLE Output`；
-2. 双击 `companion\start_hotkey_only.cmd`。入口会把设备上传的音频写进
-   `CABLE Input`，不依赖项目中已经失效的旧 `.venv`；
+2. 双击 `AI-Passport-Hotkey-Windows.exe`；从源码运行时双击
+   `companion\start_hotkey_only.cmd`。入口会把设备上传的音频写进
+   `CABLE Input`；
 3. 设备:进入「AI语音」应用 → 自动连接(几秒内);
 4. 按下设备 **UP** 时点击一次右 Shift，松开时再点击一次右 Shift，结束输入法
    的“正在识别”状态并提交文字；设备 **DOWN** 会注入一次 Enter，用于确认或
    发送当前输入框内容。
 
 转发器必须保持运行；它与 `relay.py` 二选一，不能同时占用 UDP 33333。
+首次运行若 Windows 防火墙询问，请只允许当前可信的专用网络。
 
 ### 改用电脑自己的麦克风
 

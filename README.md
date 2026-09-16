@@ -94,8 +94,9 @@
 
 **直接使用打包好的客户端（推荐，非开发者无需碰终端）**：
 
-- **macOS**：[下载 AI-Passport-macOS.dmg](https://github.com/zhaohuaxiaoy/folo-ai-passport-voice/releases/latest)（解压拖入 /Applications）
-- **Windows**：[下载 AI-Passport-Windows.exe](https://github.com/zhaohuaxiaoy/folo-ai-passport-voice/releases/latest)（双击运行）
+- **macOS**：[下载 AI-Passport-macOS.dmg](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest)（解压拖入 /Applications）
+- **Windows 完整客户端**：[下载 AI-Passport-Windows.exe](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest)（火山 ASR + 文字注入）
+- **Windows 随身 AI 语音**：[下载 AI-Passport-Hotkey-Windows.exe](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/latest)（硬件麦克风 + 右 Shift/Enter，不需要 ASR Key；需安装 VB-Cable，见 [`companion/HOTKEY_FORWARDER.md`](companion/HOTKEY_FORWARDER.md)）
 
 Release 由 GitHub Actions 双平台自动构建（`v*` tag 触发，见 `.github/workflows/build-apps.yml`）。
 
@@ -112,7 +113,7 @@ Release 由 GitHub Actions 双平台自动构建（`v*` tag 触发，见 `.githu
 
 > **安全**：API Key 只存于 `companion/config.local.json`（已被 .gitignore 忽略）或向导本地配置，**严禁提交进 git**。Key 泄露可在控制台随时吊销重建。
 
-> **自构建**：Mac 上 `companion/.venv/bin/python companion/build/pack.py --dmg`；Windows 需在 Windows 构建机运行 `python build/pack.py`（产物 `dist/AI Passport.exe`）。
+> **自构建**：Mac 上 `companion/.venv/bin/python companion/build/pack.py --dmg`；Windows 完整客户端运行 `python companion/build/pack.py`，随身 AI 语音程序运行 `python companion/build/pack.py --hotkey`。
 
 **从源码运行（开发）**：
 

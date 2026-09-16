@@ -4,8 +4,12 @@
   "volcano_resource_id": "volc.bigasr.sauc.duration",
   "volcano_model": "bigmodel_async",
   "volcano_enable_nonstream": true,
-  "channel": "ble",
+  "channel": "wifi",
   "usb_port": "",
   "inject_focus_delay": 2.0,
-  "inject_mode": "auto"
+  "inject_mode": "auto",
+  "hotkey_key": "right-shift",
+  "hotkey_mode": "tap",
+  "output_substr": "CABLE Input",
+  "device_ip": ""
 }
