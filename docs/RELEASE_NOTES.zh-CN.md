@@ -34,4 +34,9 @@ Windows x64 为本包目标环境；其他操作系统与输入法没有承诺�
 
 [0.2.0-rc.1 下载页面](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/tag/v0.2.0-rc.1) 提供完整 ZIP 和 SHA-256 校验文件。
 普通用户下载完整包，不要选择 GitHub 自动生成的 Source code。源码见本仓库同名标签。
-旧版 ASR / Agent 下载保留为维护者草稿，旧代码可从 Git 历史查阅。
+
+## 2026-10-02 教程补充
+
+首页增加 Windows 默认麦克风选择，完整教程补齐虚拟声卡安装、CABLE Input / Output 区别、
+默认设备和默认通讯设备、麦克风权限、输入法音源及录制电平测试。更新后的完整包同步包含这些步骤；
+固件、EXE 和源码保持原版，仅文档及 ZIP 校验值更新。

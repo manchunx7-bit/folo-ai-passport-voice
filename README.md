@@ -15,9 +15,10 @@
 
 1. 到 [下载页面](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/tag/v0.2.0-rc.1) 下载 **`ai-passport-voice-0.2.0-rc.1.zip`** 并全部解压。
    GitHub 自动生成的 `Source code (zip)` 只有源码，不含现成 EXE 和固件。
-2. 按 [随身语音完整教程](docs/QUICKSTART.zh-CN.md) 配好同一局域网、VB-CABLE 和微信输入法。
-3. 双击解压目录内的 **`windows/start.cmd`**，进入设备“随身语音”，确认显示“按住上键说话”。
-4. 在记事本中点击输入区，按住设备上键说一句话，松开，检查是否出字。
+2. 按 [随身语音完整教程](docs/QUICKSTART.zh-CN.md) 配好同一局域网，并安装 VB-CABLE、重启电脑。
+3. **打开 Windows“设置 → 系统 → 声音 → 输入”，将麦克风切换为 `CABLE Output (VB-Audio Virtual Cable)`。**
+4. 配好微信输入法的麦克风和语音快捷键，双击 **`windows/start.cmd`**；设备进入“随身语音”，确认显示“按住上键说话”。
+5. 在记事本中点击输入区，按住设备上键说一句话，松开，检查是否出字。
 
 日常启动就是 `windows/start.cmd`；使用下载包不需要安装 Python。
 固件安装可参考 [口袋百宝箱玩法页面](https://ai-passport.folotoy.cn/plays/438/?v=1061-7)，
@@ -28,6 +29,22 @@ AI Passport 麦克风 → 同一局域网 Wi-Fi → Windows 转发器
                                       ├─ 语音快捷键 → 微信输入法
                                       └─ VB-CABLE → 输入法麦克风 → 文字
 ```
+
+## 关键设置：电脑麦克风选择 CABLE Output
+
+**只安装虚拟声卡还不够，Windows 的默认输入也要切换。** 在“设置 → 系统 → 声音”找到“输入”，
+展开“选择用于讲话或录制的设备”，选中 **CABLE Output**，确认显示为默认设备。
+微信输入法如果有自己的麦克风选择，也选 CABLE Output；没有独立选项时使用这个系统默认输入。
+
+| 设置位置 | 应选择的设备 |
+| --- | --- |
+| Windows“声音 → 输入”（麦克风） | **CABLE Output (VB-Audio Virtual Cable)** |
+| 微信输入法的麦克风 | **CABLE Output**，或跟随上述系统默认输入 |
+| 随身语音转发器的音频输出 | **CABLE Input**，程序默认自动选择 |
+| Windows“声音 → 输出”（扬声器） | 自己平时使用的扬声器或耳机 |
+
+首次配置请按 [虚拟声卡详细步骤](docs/QUICKSTART.zh-CN.md#3-安装与配置-vb-cable-虚拟声卡)
+完成安装、默认设备/默认通讯设备、权限和收音检查。
 
 ## 准备什么
 
@@ -63,9 +80,6 @@ macOS、Linux 和 ARM Windows 不在当前发布包的验收范围。
 | `firmware/` | 下载包内含三份固件；Git 仓库保留获取说明 |
 | `licenses/` | 第三方许可文本 |
 | `manifest.json` | 版本、硬件型号、固件地址和哈希 |
-
-固件和电脑端应使用同一版。旧 ASR / Agent 代码保留在 Git 历史，当前主分支只维护这里的随身语音方案。
-旧版下载移入维护者草稿；请使用上方明确标注 `0.2.0-rc.1` 的下载入口。
 
 ## 网络与隐私
 
