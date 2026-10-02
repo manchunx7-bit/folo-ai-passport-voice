@@ -1,23 +1,20 @@
-build/
-!companion/build/
-!companion/build/pack.py
-sdkconfig
-sdkconfig.old
-managed_components/
-dependencies.lock
-.vscode/
-
-# 本地密钥(严禁提交)
-companion/config.local.json
-companion/.env
-companion/.venv/
-__pycache__/
+backups/
+.flash-venv/
+**/.venv/
+**/__pycache__/
+**/build/
+**/managed_components/
+**/config.local.json
+**/voice-config.json
 *.log
-companion/*.log
+*.elf
+*.map
 
-# 固件/向导发布产物(不入库)
-dist/
-.cache/
-
-# Trellis 运行时(会话/临时),任务工件 .trellis/tasks/ 保留
-.trellis/.runtime/
+*.exe
+*.bin
+*.pyc
+*.zip
+.env
+.env.*
+**/sdkconfig
+**/sdkconfig.old

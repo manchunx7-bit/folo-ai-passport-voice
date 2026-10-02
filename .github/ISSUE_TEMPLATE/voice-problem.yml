@@ -1,0 +1,22 @@
+name: 随身语音使用问题
+description: 连接、麦克风、快捷键或识别问题
+title: "[Voice] "
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境和版本
+      description: 固件包版本、硬件、Windows 版本、输入法版本；不要填密钥或 Wi-Fi 密码。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤与当前设备提示
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: 检查结果
+      description: CABLE Output 能否录到设备声音、快捷键及 hold/tap、是否只运行一个转发器、脱敏错误文本。勿上传完整 Flash 备份或私人录音。

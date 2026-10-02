@@ -1,0 +1,2 @@
+# Windows hardware microphone + hotkey bridge only. No cloud ASR dependencies.
+sounddevice==0.5.6

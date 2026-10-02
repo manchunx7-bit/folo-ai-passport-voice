@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0-rc.1",
+  "status": "prerelease",
+  "hardware": "FoloToy AI Passport ESP32-C3 / 8MB / ST7789P3 / ES8311",
+  "idf": "5.5.3",
+  "firmware": {
+    "bootloader.bin": {
+      "offset": 0,
+      "size": 21136,
+      "sha256": "bf1833b61e6d5ae2fff5763ebaacae11554b8c2706072fc9c1e22679db380c63"
+    },
+    "partition-table.bin": {
+      "offset": 32768,
+      "size": 3072,
+      "sha256": "5cc116533e5b5a01a365b207766b9ae360b5137563d997f0677f71ebb1fe5cca"
+    },
+    "passport-os.bin": {
+      "offset": 65536,
+      "size": 3118352,
+      "sha256": "f092df34e2cd96f0f730f751558851092fcbc4de6a34fb250628fc7e75fcbe37"
+    }
+  }
+}

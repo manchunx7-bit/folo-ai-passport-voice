@@ -1,0 +1,7 @@
+{
+  "hotkey_key": "right-shift",
+  "hotkey_mode": "hold",
+  "output_substr": "CABLE Input",
+  "udp_port": 33333,
+  "device_ip": ""
+}

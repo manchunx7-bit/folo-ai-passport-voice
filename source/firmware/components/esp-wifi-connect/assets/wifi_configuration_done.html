@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WiFi Configuration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    <style>
+        :root {
+            --bg-grad-1: #181b1c;
+            --bg-grad-2: #181b1c;
+            --surface: #202526;
+            --border: #59605d;
+            --text: #eee7d6;
+            --text-muted: #b3b2a5;
+            --success: #9db89a;
+            --shadow: none;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-grad-1: #181b1c;
+                --bg-grad-2: #181b1c;
+                --surface: #202526;
+                --border: #59605d;
+                --text: #eee7d6;
+                --text-muted: #b3b2a5;
+                --success: #9db89a;
+                --shadow: none;
+            }
+        }
+
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            overflow: auto;
+            font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+            color: var(--text);
+            background: linear-gradient(160deg, var(--bg-grad-1), var(--bg-grad-2));
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            max-height: none;
+            padding: 24px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            box-shadow: var(--shadow);
+            padding: 40px 36px;
+            max-width: 360px;
+            width: 100%;
+        }
+
+        .checkmark {
+            width: 110px;
+            height: 110px;
+            margin-bottom: 24px;
+        }
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke: var(--success);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: var(--success);
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+        }
+
+        @keyframes stroke {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .message {
+            text-align: center;
+        }
+        .message .primary {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+        .message .secondary {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+    /* Keyboard focus and reduced motion remain visible on the dark terminal. */
+        :focus-visible { outline: 2px solid #ddb36c; outline-offset: 3px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after {
+            animation-duration: 0.01ms !important; transition-duration: 0.01ms !important;
+        } }
+
+/* Travel instrument: unboxed editorial headings; inputs retain affordance. */
+.card{border:0;border-top:1px solid var(--border);background:transparent}
+input,button,select{font:inherit}
+h1,h2,h3{letter-spacing:.04em;font-weight:600;line-height:1.25}
+p{line-height:1.65}
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" stroke-width="2"/>
+                <path class="checkmark__check" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+
+            <div class="message">
+                <p class="primary" id="message">Configuration successful!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const params = new URLSearchParams(window.location.search);
+            const message = params.get('message') || 'Configuration successful!';
+            document.title = message;
+            document.getElementById('message').textContent = message;
+
+            // Send exit request after a short delay
+            setTimeout(function() {
+                fetch('/exit', {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Exit config mode request sent');
+                    } else {
+                        console.error('Failed to send exit request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
