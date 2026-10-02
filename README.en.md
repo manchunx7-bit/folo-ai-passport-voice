@@ -3,7 +3,7 @@
 Use a FoloToy AI Passport as a Wi-Fi microphone and voice-input shortcut for a Windows PC.
 Hold the device's upper button to speak and release it to finish. Recognition is performed by the PC input method.
 
-**0.2.0-rc.1 is a prerelease.** Device-to-text has been reported working, but recognition accuracy is poor. The packaged EXE has not yet completed separate end-to-end validation.
+**0.2.0-rc.1 is a prerelease.** On 2026-10-02, the maintainer confirmed successful dictation and accurate recognition using the firmware and Windows program from the published GitHub package. This is one tested device/PC/WeType setup; error rates and compatibility across other computers have not been measured.
 
 - [Download the complete package](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases/tag/v0.2.0-rc.1): choose `ai-passport-voice-0.2.0-rc.1.zip`, not GitHub's automatic source archive.
 - [Chinese setup guide](docs/QUICKSTART.zh-CN.md): Wi-Fi, VB-CABLE, WeType, hotkey configuration and first dictation.
