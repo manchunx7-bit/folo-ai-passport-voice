@@ -6,8 +6,8 @@ import socket
 import sys
 
 
-def main():
-    print('AI Passport Voice diagnostics (Windows / UDP 33333)')
+def main(args=None):
+    print('AI Passport Voice diagnostics (Windows)')
     print('Python:', sys.version.split()[0])
     problems = 0
     if sys.platform != 'win32':
@@ -16,21 +16,27 @@ def main():
     from hotkey_forwarder import load_local_config, resolve_key_spec
     config = load_local_config()
     try:
-        resolve_key_spec(config.get('hotkey_key') or 'right-shift')
-        assert config.get('hotkey_mode', 'hold') in ('hold', 'tap')
+        resolve_key_spec(args.key if args else (config.get('hotkey_key') or 'right-shift'))
+        assert (args.mode if args else config.get('hotkey_mode', 'hold')) in ('hold', 'tap')
         print('[OK] Shortcut syntax. Verify the same shortcut in your input method.')
     except (ValueError, AssertionError):
         print('[FAIL] Invalid hotkey_key or hotkey_mode in voice-config.json.')
         problems += 1
-    port = 33333
+    try:
+        port = args.port if args else int(config.get('udp_port', 33333))
+        if not 1 <= port <= 65535:
+            raise ValueError('Port out of range')
+    except (ValueError, TypeError):
+        print('[FAIL] Invalid UDP port in config.')
+        return 1
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.bind(('0.0.0.0', port))
-        print('[OK] UDP 33333 available. Start only one bridge.')
+        print(f'[OK] UDP {port} available. Start only one bridge.')
     except OSError as e:
-        print('[BUSY] UDP 33333:', e)
+        print(f'[BUSY] UDP {port}:', e)
         print('If your bridge is running this is expected; otherwise close the OLD bridge.')
-        print('PowerShell: Get-NetUDPEndpoint -LocalPort 33333 | Select OwningProcess')
+        print(f'PowerShell: Get-NetUDPEndpoint -LocalPort {port} | Select OwningProcess')
         problems += 1
     try:
         import sounddevice as sd
@@ -43,7 +49,8 @@ def main():
             if 'cable' not in name.lower():
                 continue
             print(f'  [{i}] {name}: inputs={device["max_input_channels"]}, outputs={device["max_output_channels"]}')
-            if device['max_output_channels'] and (config.get('output_substr') or 'CABLE Input').lower() in name.lower():
+            output_substr = args.output_substr if args else (config.get('output_substr') or 'CABLE Input')
+            if device['max_output_channels'] and output_substr.lower() in name.lower():
                 outputs.append(i)
             if device['max_input_channels'] and 'cable output' in name.lower():
                 inputs.append(i)

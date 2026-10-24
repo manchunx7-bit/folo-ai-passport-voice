@@ -652,7 +652,7 @@ def main():
 
     if args.diagnose:
         from diagnose_voice import main as diagnose
-        raise SystemExit(diagnose())
+        raise SystemExit(diagnose(args))
 
     if args.list_keys:
         print("可用键名(组合键用 + 连接,如 win+h):")

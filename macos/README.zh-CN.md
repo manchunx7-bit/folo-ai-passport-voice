@@ -4,6 +4,8 @@
 
 **适用范围：Apple 芯片 Mac + 原生 arm64 Python 3.11 或更新版本。当前为源码测试客户端，没有签名的 `.app` / `.dmg`；尚未完成真实 Mac 安装、CoreAudio 和微信输入法出字验收。** Intel Mac、Rosetta 下的 x86 Python 不支持；支持的最低 macOS 版本及输入法版本仍待实机核对。下文是配置与验收流程，不代表所有版本已通过兼容测试。
 
+使用完整源码仓库时，可将 [Agent 配置指令](https://github.com/manchunx7-bit/folo-ai-passport-voice/blob/main/docs/AGENT_SETUP.zh-CN.md) 交给本地 Codex、Claude Code、WorkBuddy 等。独立 Mac 测试 ZIP 可能不含此文档或新增诊断工具，缺失时继续按本页操作，不猜不存在的命令。
+
 Windows 用户请看 [Windows 完整教程](https://github.com/manchunx7-bit/folo-ai-passport-voice/blob/main/docs/QUICKSTART.zh-CN.md)。
 
 ## 配置顺序

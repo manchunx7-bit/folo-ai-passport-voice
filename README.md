@@ -6,7 +6,22 @@
 
 **本仓库只开源随身语音功能，不含整机源码或可刷写固件。** 固件由维护者在 [FoloToy 口袋百宝箱玩法页面](https://ai-passport.folotoy.cn/plays/438/) 发布。该页面若暂未提供包含随身语音的版本，请等待更新；不要把本仓库 Source code ZIP 当固件。
 
-## 选择你的电脑
+<a id="codex-setup"></a>
+## 让 AI 帮你配置
+
+在这台电脑上的 Codex、Claude Code、WorkBuddy 等 Agent 中打开**完整项目目录**，复制下面的指令。需要本地文件与终端权限；系统授权和实际说话需要你参与。
+
+```text
+请帮我配置 AI Passport 随身语音。先读 AGENTS.md 和 docs/AGENT_SETUP.zh-CN.md，
+识别我的系统、现有程序与配置，按对应教程执行检查和配置，已有设置先备份。
+只询问不能检测的信息，核对输入法真实快捷键与音源；需要授权或重启时记录进度。
+最后让我在空白文稿亲自说话，确认开始、松开结束、出字和下键换行。
+不要自动录音发送。分别报告自动检查、用户确认和待验证项目，并告诉我日常如何启动。
+```
+
+详细流程、诊断命令、重启后继续及完成标准见 **[Agent 配置手册](docs/AGENT_SETUP.zh-CN.md)**。旧版应用包没有新手册时使用其内置 [Codex 教程](docs/CODEX_SETUP.zh-CN.md)，或获取最新文档；不假定旧 EXE 支持新工具。
+
+## 手动配置：选择你的电脑
 
 | 平台 | 安装与配置教程 | 软件与启动方式 |
 | --- | --- | --- |
@@ -58,35 +73,11 @@ Mac 当前没有签名的 `.app` / `.dmg`，Intel Mac 和 Rosetta 下的 x86 Pyt
 - [macOS 完整配置教程与故障排查](macos/README.zh-CN.md)
 - [Windows 完整配置教程](docs/QUICKSTART.zh-CN.md)
 - [按平台查找故障排查](docs/TROUBLESHOOTING.zh-CN.md)
-- [用本地 Codex 辅助配置：Mac / Windows](docs/CODEX_SETUP.zh-CN.md)
+- [Agent 自动检查与配置：Codex / Claude Code / WorkBuddy](docs/AGENT_SETUP.zh-CN.md)
+- [原 Codex 平台配置说明](docs/CODEX_SETUP.zh-CN.md)
 - [官网固件与刷写注意](docs/FIRMWARE.zh-CN.md)
 - [源码运行与测试](docs/DEVELOPMENT.zh-CN.md)
 - [验证记录及限制](docs/VALIDATION.md)
 - [第三方来源](THIRD_PARTY_NOTICES.md)
 
-<a id="codex-setup"></a>
-## 让本地 Codex 帮忙配置
-
-在解压后的**完整项目目录**打开这台电脑上的本地 Codex，按平台复制。它需要能访问本地文件与终端；系统授权、重启和实际说话需要你参与。
-
-### macOS
-
-```text
-请阅读 README.md 和 macos/README.zh-CN.md，帮助我配置 AI Passport 随身语音 Mac 测试客户端。
-先核对 Apple 芯片、系统和 Python 都为 arm64，Python 3.11+，macos 与 windows 共享模块完整；已有 macos/voice-config.json 先备份。
-按教程安装依赖，核对 BlackHole 2ch、实际宿主的辅助功能权限、输入法麦克风权限与本地网络。音频出口和输入法音源均为 BlackHole 2ch，系统输出保持扬声器或耳机。
-用 macos/.venv/bin/python3 macos/mac_voice.py --diagnose 做检查；同一时间只运行一个客户端。先用实体键盘核对输入法实际语音快捷键及 hold/tap，不假定 F9 或 Fn 是可用默认键。
-最后让我在文本编辑里对设备说话，分别确认文字出现、松开结束、下键只换行一次。区分已检查和待实机验证，诊断通过不能代替出字验收。
-只配置电脑端，固件从官网玩法页获取；不公开整机源码、录音或个人配置，不自动把环境声音发到云端。
-```
-
-### Windows
-
-```text
-先阅读 README.md 和 docs/QUICKSTART.zh-CN.md。只帮助我配置随身语音电脑端，不要重建或公开整机源码。固件从官网玩法页获取，不要把 Source code ZIP 当固件。
-先运行 windows/AI-Passport-Voice.exe --diagnose，核对 VB-CABLE 两端、UDP 33333 和快捷键。已有配置先备份；我的输入法开始/结束快捷键和 hold/tap 模式需要按真实设置核对。
-修改默认麦克风、安装驱动或开放防火墙前说明影响。不要关闭整套防火墙，也不要把系统声音输出改成 CABLE Input。
-最后让我在记事本亲自说话，确认松开结束、文字出现、下键换行。未实际验证的环节明确说明，不自动把环境声音发到云端。
-```
-
-详见 [辅助配置说明](docs/CODEX_SETUP.zh-CN.md)。个人配置、录音与输入法账号不要提交到 GitHub。本项目不提供识别账号或 ASR 服务，也不承诺所有输入法版本兼容。
+个人配置、录音与输入法账号不要提交到 GitHub。本项目不提供识别账号或 ASR 服务，也不承诺所有输入法版本兼容。
