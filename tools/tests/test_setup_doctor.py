@@ -74,12 +74,28 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(keyboard.mock_calls, [])
 
     def test_native_intel_mac_is_supported(self):
+        sys.path.insert(0, str(TOOLS.parent / 'macos'))
+        import mac_keys
+        import platform_support
         with mock.patch.object(d.platform, 'machine', return_value='x86_64'), \
-             mock.patch.object(d, 'mac_runtime_supported', return_value=True), \
+             mock.patch.object(platform_support, 'running_under_rosetta', return_value=False), \
+             mock.patch.object(mac_keys, 'QuartzKeyboard', return_value=mock.Mock(ready=True)), \
              mock.patch.object(d.socket, 'socket', return_value=mock.MagicMock()), \
              mock.patch.object(d, 'audio_check', return_value=d.check('audio', 'PASS', 'mock')):
             report = d.collect(system='Darwin')
         self.assertEqual(next(c['status'] for c in report['checks'] if c['id'] == 'runtime'), 'PASS')
+
+    def test_rosetta_mac_skips_audio_and_network_checks(self):
+        sys.path.insert(0, str(TOOLS.parent / 'macos'))
+        import platform_support
+        with mock.patch.object(d.platform, 'machine', return_value='x86_64'), \
+             mock.patch.object(platform_support, 'running_under_rosetta', return_value=True), \
+             mock.patch.object(d.socket, 'socket') as sock, \
+             mock.patch.object(d, 'audio_check') as audio:
+            report = d.collect(system='Darwin')
+        self.assertEqual(next(c['status'] for c in report['checks'] if c['id'] == 'runtime'), 'FAIL')
+        sock.assert_not_called()
+        audio.assert_not_called()
 
     def test_custom_port_is_bound_and_no_runtime_stream_is_opened(self):
         with tempfile.TemporaryDirectory() as folder:

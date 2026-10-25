@@ -22,7 +22,7 @@ def mac_runtime_supported(system, architecture):
     try:
         from platform_support import runtime_supported
     except ImportError:
-        return architecture in ('arm64', 'x86_64') and sys.version_info >= (3, 11)
+        return False
     return runtime_supported(system=system, architecture=architecture)
 
 
