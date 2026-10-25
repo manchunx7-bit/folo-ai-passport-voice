@@ -89,8 +89,8 @@ def diagnose(args, keyboard_factory=QuartzKeyboard, sd=None):
     print('AI Passport Mac 测试版诊断（不注入按键、不采音、不更改系统音频设置）')
     print('系统：', platform.mac_ver()[0] or sys.platform, '架构：', platform.machine())
     failures = 0
-    if sys.platform != 'darwin' or platform.machine() != 'arm64' or sys.version_info < (3, 11):
-        print('[FAIL] 此测试包面向 Apple 芯片，请使用原生 arm64 Python 3.11+。')
+    if sys.platform != 'darwin' or platform.machine() not in ('arm64', 'x86_64') or sys.version_info < (3, 11):
+        print('[FAIL] 请在原生 arm64/x86_64 Python 3.11+ 运行（勿用 Rosetta）。')
         failures += 1
     try:
         keyboard = keyboard_factory()
@@ -168,8 +168,8 @@ def main():
         parser.error(str(error))
     if args.diagnose:
         return diagnose(args)
-    if sys.platform != 'darwin' or platform.machine() != 'arm64' or sys.version_info < (3, 11):
-        parser.error('请在 Apple 芯片 Mac 的原生 arm64 Python 3.11+ 中运行')
+    if sys.platform != 'darwin' or platform.machine() not in ('arm64', 'x86_64') or sys.version_info < (3, 11):
+        parser.error('请在原生 arm64/x86_64 Python 3.11+ 中运行')
     if args.list_devices:
         try:
             import sounddevice as sd
