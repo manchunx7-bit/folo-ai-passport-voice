@@ -4,10 +4,14 @@
 
 ## 1. 给用户的复制指令
 
-下载并解压完整项目，或在本地克隆仓库后，用 Agent 打开项目根目录，复制：
+优先直接把下面的完整指令交给能访问这台电脑本地文件与终端的 Agent。它会先检查当前工作目录；如果项目不存在，先从公开地址下载或克隆，再进入项目根目录读取规范并继续。不要让用户为了让 Agent 配置而先手动下载源码：
+
+`https://github.com/manchunx7-bit/folo-ai-passport-voice`
 
 ```text
-请帮我配置本项目的 AI Passport 随身语音，直到实际说话出字。
+请帮我配置 AI Passport 随身语音，直到实际说话出字。
+项目地址：https://github.com/manchunx7-bit/folo-ai-passport-voice
+如果当前电脑没有这个项目，请先下载或克隆它，进入项目根目录后继续，不要要求我先手动下载原项目。
 先阅读 AGENTS.md、docs/AGENT_SETUP.zh-CN.md 和当前平台教程。
 识别操作系统、安装包和已有配置，执行本地检查并修复可处理的缺项；
 已有配置先备份到 .setup/，不要覆盖有效设置或重复安装可用组件。
@@ -21,7 +25,7 @@
 给出日常启动方式。不要上传个人配置、录音或账号信息。
 ```
 
-没有文件夹时，将此仓库地址交给 Agent：`https://github.com/manchunx7-bit/folo-ai-passport-voice`。让它先准备完整项目，再执行上述流程。Windows 普通用户优先使用 README 链接的 EXE 应用包，Mac 使用完整源码。旧包没有本手册时，读取其 `docs/CODEX_SETUP.zh-CN.md`，或先获取最新文档，不假定旧包包含新工具。
+如果 Agent 无法访问网络或没有创建目录的权限，只询问用户完成下载/授权这一项，再从项目根目录继续；不要把“项目未下载”误报成“配置失败”。Windows 普通用户优先使用 README 链接的 EXE 应用包，Mac 使用完整源码。旧包没有本手册时，读取其 `docs/CODEX_SETUP.zh-CN.md`，或先从上面的仓库地址获取最新文档，不假定旧包包含新工具。
 
 ## 2. 分支选择与准备
 

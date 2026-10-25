@@ -9,17 +9,20 @@
 <a id="codex-setup"></a>
 ## 让 AI 帮你配置
 
-在这台电脑上的 Codex、Claude Code、WorkBuddy 等 Agent 中打开**完整项目目录**，复制下面的指令。需要本地文件与终端权限；系统授权和实际说话需要你参与。
+在这台电脑上的 Codex、Claude Code、WorkBuddy 等 Agent 中复制下面的指令。Agent 会先检查当前目录；如果项目尚未下载，会使用下面的公开仓库地址准备完整项目，再继续配置。需要本地文件与终端权限；系统授权和实际说话需要你参与。
 
 ```text
-请帮我配置 AI Passport 随身语音。先读 AGENTS.md 和 docs/AGENT_SETUP.zh-CN.md，
+请帮我配置 AI Passport 随身语音。
+项目地址：https://github.com/manchunx7-bit/folo-ai-passport-voice
+如果当前电脑没有本项目，请先下载或克隆这个仓库，进入项目根目录后继续；不要要求我先手动下载原项目。
+先读 AGENTS.md 和 docs/AGENT_SETUP.zh-CN.md，
 识别我的系统、现有程序与配置，按对应教程执行检查和配置，已有设置先备份。
 只询问不能检测的信息，核对输入法真实快捷键与音源；需要授权或重启时记录进度。
 最后让我在空白文稿亲自说话，确认开始、松开结束、出字和下键换行。
 不要自动录音发送。分别报告自动检查、用户确认和待验证项目，并告诉我日常如何启动。
 ```
 
-详细流程、诊断命令、重启后继续及完成标准见 **[Agent 配置手册](docs/AGENT_SETUP.zh-CN.md)**。旧版应用包没有新手册时使用其内置 [Codex 教程](docs/CODEX_SETUP.zh-CN.md)，或获取最新文档；不假定旧 EXE 支持新工具。
+详细流程、诊断命令、重启后继续及完成标准见 **[Agent 配置手册](docs/AGENT_SETUP.zh-CN.md)**。旧版应用包没有新手册时使用其内置 [Codex 教程](docs/CODEX_SETUP.zh-CN.md)，或从上面的仓库地址获取最新文档；不假定旧 EXE 支持新工具。
 
 ## 手动配置：选择你的电脑
 
