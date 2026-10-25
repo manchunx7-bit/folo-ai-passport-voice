@@ -63,6 +63,7 @@ class ReportTest(unittest.TestCase):
         import mac_keys
         keyboard = mock.Mock(ready=False)
         with mock.patch.object(d.platform, 'machine', return_value='arm64'), \
+             mock.patch.object(d, 'mac_runtime_supported', return_value=True), \
              mock.patch.object(d.socket, 'socket', return_value=mock.MagicMock()), \
              mock.patch.object(d, 'audio_check', return_value=d.check('audio', 'PASS', 'mock')), \
              mock.patch.object(mac_keys, 'QuartzKeyboard', return_value=keyboard):
@@ -71,6 +72,14 @@ class ReportTest(unittest.TestCase):
                               if c['id'] == 'keyboard_permission'), 'FAIL')
         self.assertEqual(report['overall'], 'NEEDS_ATTENTION')
         self.assertEqual(keyboard.mock_calls, [])
+
+    def test_native_intel_mac_is_supported(self):
+        with mock.patch.object(d.platform, 'machine', return_value='x86_64'), \
+             mock.patch.object(d, 'mac_runtime_supported', return_value=True), \
+             mock.patch.object(d.socket, 'socket', return_value=mock.MagicMock()), \
+             mock.patch.object(d, 'audio_check', return_value=d.check('audio', 'PASS', 'mock')):
+            report = d.collect(system='Darwin')
+        self.assertEqual(next(c['status'] for c in report['checks'] if c['id'] == 'runtime'), 'PASS')
 
     def test_custom_port_is_bound_and_no_runtime_stream_is_opened(self):
         with tempfile.TemporaryDirectory() as folder:

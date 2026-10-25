@@ -29,14 +29,14 @@
 
 ## 2. 分支选择与准备
 
-| 检查项 | Windows 10/11 x64 | Apple 芯片 Mac |
+| 检查项 | Windows 10/11 x64 | macOS 原生 arm64/x86_64 |
 | --- | --- | --- |
 | 必读教程 | [Windows 完整教程](QUICKSTART.zh-CN.md) | [Mac 完整教程](../macos/README.zh-CN.md) |
-| 首选程序 | 发布包内 `windows/AI-Passport-Voice.exe` | 原生 arm64 Python 3.11+ 与源码 |
+| 首选程序 | 发布包内 `windows/AI-Passport-Voice.exe` | 原生 arm64 或 x86_64 Python 3.11+ 与源码 |
 | 缺少程序 | 从 README 的 Releases 获取应用包，不要求普通用户安装 Python | 按教程检查 Python，再运行 `bash macos/install.command` |
 | 虚拟声卡出口 | CABLE Input | BlackHole 2ch |
 | 输入法麦克风 | CABLE Output | BlackHole 2ch |
-| 当前验证范围 | 按 [验证记录](VALIDATION.md) 判断 | 源码测试版，真实 Mac 出字仍待验收；Intel/Rosetta 不支持 |
+| 当前验证范围 | 按 [验证记录](VALIDATION.md) 判断 | 源码测试版，真实 Mac 出字仍待验收；支持 Intel 原生 x86_64，Rosetta 不支持 |
 
 先确认用户设备已有“随身语音/AI语音”应用，能打开则跳过刷机。设备使用 2.4 GHz Wi-Fi，电脑与设备在同一可互通局域网；USB 不是麦克风通道，不需蓝牙配对。版本关系见 [固件说明](FIRMWARE.zh-CN.md)。
 

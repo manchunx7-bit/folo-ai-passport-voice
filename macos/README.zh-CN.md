@@ -2,7 +2,7 @@
 
 目标：**按住设备上键，对着设备说话，松开后 Mac 输入框出现文字；核对后短按下键回车。** 识别由微信输入法等语音输入软件完成，客户端负责传声音和快捷键，不提供 ASR 服务或 API Key。
 
-**适用范围：Apple 芯片 Mac + 原生 arm64 Python 3.11 或更新版本。当前为源码测试客户端，没有签名的 `.app` / `.dmg`；尚未完成真实 Mac 安装、CoreAudio 和微信输入法出字验收。** Intel Mac、Rosetta 下的 x86 Python 不支持；支持的最低 macOS 版本及输入法版本仍待实机核对。下文是配置与验收流程，不代表所有版本已通过兼容测试。
+**适用范围：Intel Mac 原生 x86_64 或 Apple 芯片 Mac 原生 arm64，Python 3.11 或更新版本。当前为源码测试客户端，没有签名的 `.app` / `.dmg`；尚未完成完整的真实 Mac 安装、CoreAudio 和微信输入法出字验收。** Apple Silicon 下通过 Rosetta 运行不支持；支持的最低 macOS 版本及输入法版本仍待实机核对。下文是配置与验收流程，不代表所有版本已通过兼容测试。
 
 使用完整源码仓库时，可将 [Agent 配置指令](https://github.com/manchunx7-bit/folo-ai-passport-voice/blob/main/docs/AGENT_SETUP.zh-CN.md) 交给本地 Codex、Claude Code、WorkBuddy 等。独立 Mac 测试 ZIP 可能不含此文档或新增诊断工具，缺失时继续按本页操作，不猜不存在的命令。
 
@@ -36,9 +36,9 @@ USB 用于供电或烧录，插上 USB 不会出现 USB 麦克风，也不需要
 
 | 项目 | 要求 / 下载入口 |
 | --- | --- |
-| 电脑 | 苹果菜单 → 关于本机，确认“芯片”为 Apple M 系列；“处理器”为 Intel 的 Mac 不适用 |
+| 电脑 | 苹果菜单 → 关于本机，确认是 Apple 芯片或 Intel Mac；Apple 芯片不要通过 Rosetta 打开终端 |
 | 设备 | 同款 ESP32-C3 / 8 MB / ES8311 AI Passport，已安装包含“随身语音 / AI语音”的固件 |
-| Python | [Python 官方 macOS 下载页](https://www.python.org/downloads/macos/)，3.11+，实际运行架构为 arm64 |
+| Python | [Python 官方 macOS 下载页](https://www.python.org/downloads/macos/)，3.11+；Apple 芯片实际运行架构为 arm64，Intel Mac 为 x86_64 |
 | 虚拟声卡 | [BlackHole 官方安装页](https://existential.audio/blackhole/)，选择 **2ch** |
 | 输入法 | [微信输入法官网](https://z.weixin.qq.com/)，下载 Mac 版；需有可用的语音功能及可匹配的快捷键 |
 | 网络 | 设备接入 2.4 GHz Wi-Fi；Mac 和设备在同一可互通局域网，默认使用 UDP 33333 |
@@ -80,8 +80,8 @@ Mac 会复用 `windows/` 中的协议模块，不会调用 Windows 的按键接�
 <a id="python"></a>
 ## 2. 安装并检查原生 Python
 
-1. 从 Python 官方下载页安装 **3.11 或更新版本的 macOS 安装包**。支持 Apple 芯片的 universal2 安装包可以使用，关键是实际运行架构为 arm64。
-2. 安装完成后重新打开“终端”。若你以前给终端勾过“使用 Rosetta 打开”，取消后重开。
+1. 从 Python 官方下载页安装 **3.11 或更新版本的 macOS 安装包**。Apple 芯片可使用 universal2 安装包，Intel Mac 使用 x86_64 安装包。
+2. 安装完成后重新打开“终端”。Apple 芯片如果以前给终端勾过“使用 Rosetta 打开”，取消后重开。
 3. 逐条执行：
 
 ```bash
@@ -90,9 +90,9 @@ python3 --version
 python3 -c 'import platform, sys; print(sys.executable); print(platform.machine())'
 ```
 
-**完成标志：** `uname -m` 和 Python 打印的架构均为 `arm64`，Python 版本不低于 3.11。系统与 Python 架构要分别检查。
+**完成标志：** Intel Mac 上 `uname -m` 和 Python 打印 `x86_64`；Apple 芯片上两者均为 `arm64`；Python 版本不低于 3.11。系统与 Python 架构要分别检查。
 
-如果提示 `command not found`、版本太旧或 Python 打印 `x86_64`，先修好 Python 环境。装过多个版本时，用 `which -a python3` 查看命令解析到了哪一个；安装脚本会使用当前终端找到的 `python3`。不要在架构检查失败时继续安装，不要用 `sudo pip` 修改系统 Python。
+如果提示 `command not found`、版本太旧、架构与 Mac 不匹配或 Rosetta 检测失败，先修好 Python 环境。装过多个版本时，用 `which -a python3` 查看命令解析到了哪一个；安装脚本会使用当前终端找到的 `python3`。不要在架构检查失败时继续安装，不要用 `sudo pip` 修改系统 Python。
 
 <a id="blackhole"></a>
 ## 3. 安装 BlackHole 2ch
@@ -303,7 +303,7 @@ macos/.venv/bin/python3 macos/mac_voice.py --list-devices
 
 | 现象 | 按顺序处理 |
 | --- | --- |
-| 找不到 Python / 架构错误 | 回到第 2 节，分别检查系统和 Python 均为 arm64、版本为 3.11+；重开终端 |
+| 找不到 Python / 架构错误 | 回到第 2 节，分别检查系统与 Python 架构（Intel 为 x86_64、Apple 芯片为 arm64）、版本为 3.11+，并确认没有使用 Rosetta；重开终端 |
 | `No such file` / 找不到共享模块 | 回到项目根目录，确认完整保留 macos 和 windows；不要单独移动脚本 |
 | 提示先运行 install.command | 在根目录运行 `bash macos/install.command`，查看首条错误；移动目录后检查虚拟环境是否失效 |
 | 缺少 `sounddevice` / `Quartz` | 用安装脚本装到 macos/.venv；启动用 start.command，不要切到另一个 Python |
@@ -348,7 +348,7 @@ BlackHole 2ch 是否可见 / 输入电平是否随设备变化：
 
 现有记录：2026-10-17 在 Windows 原生 Python 3.11 上通过 24 项 Mac 客户端测试与 15 项原 Windows 测试。Mac 测试使用模拟 Quartz、模拟声卡及真实回环 UDP，覆盖权限、按键清理、重复包、断线、音频超时、双声道、队列、广播和收发流程，没有采集真实录音或注入真实桌面按键。
 
-**这些结果不代替 Apple 芯片 Mac 上的安装、系统权限、CoreAudio 和输入法真实出字验收。** GitHub Actions 的 Mac 运行器用于检查依赖和自动测试，结果以对应提交为准；CI 通过也不是微信输入法实机兼容认证。
+**这些结果不代替 Intel 或 Apple 芯片 Mac 上的安装、系统权限、CoreAudio 和输入法真实出字验收。** GitHub Actions 的 Mac 运行器用于检查依赖和自动测试，结果以对应提交为准；CI 通过也不是微信输入法实机兼容认证。
 
 开发者从项目根目录运行已有测试：
 

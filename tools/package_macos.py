@@ -10,8 +10,10 @@ FILES = (
     'LICENSE', 'THIRD_PARTY_NOTICES.md',
     'macos/README.zh-CN.md', 'macos/mac_voice.py', 'macos/mac_audio.py',
     'macos/mac_keys.py', 'macos/mac_network.py', 'macos/requirements.txt',
+    'macos/platform_support.py',
     'macos/install.command', 'macos/start.command', 'macos/diagnose.command',
     'macos/voice-config.example.json', 'macos/tests/test_mac_client.py',
+    'macos/tests/test_platform_support.py',
     'windows/adpcm.py', 'windows/hotkey_forwarder.py', 'windows/udp_transport.py',
     'windows/tests/test_hotkey_forwarder_unit.py', 'windows/tests/test_hotkey_release.py',
 )
@@ -23,11 +25,11 @@ def build(output):
     # The root quick start must link only to the included guide, not assume repo files.
     payloads['README-Mac.md'] = ('# AI Passport Mac 测试包\n\n'
         '先阅读 [Mac 安装与验收教程](macos/README.zh-CN.md)。\n\n'
-        '在 Apple 芯片 Mac 解压后依次运行 macos/install.command、'
+        '在 Intel 或 Apple 芯片 Mac 解压后依次运行 macos/install.command、'
         'macos/diagnose.command、macos/start.command。\n\n'
         '这是源码测试包，未完成 Mac 实机和微信输入法真实出字验收。'
         '不包含固件，也不需要为此次适配重新烧录。\n').encode('utf-8')
-    manifest = dict(package='macos-arm64-source-test', hardware_validated=False,
+    manifest = dict(package='macos-native-source-test', hardware_validated=False,
         notes='Local fake-native and real-loopback tests only; no signed app or drivers.',
         sha256={name: hashlib.sha256(data).hexdigest() for name, data in payloads.items()})
     payloads['MANIFEST.json'] = (json.dumps(manifest, ensure_ascii=False, indent=2) + '\n').encode()

@@ -14,7 +14,7 @@ Codex 可以帮助检查下载包、声卡、快捷键配置与端口，编辑�
 
 ### 准备完整项目
 
-从仓库 `main` 分支的 **Code → Download ZIP** 下载并完整解压。在本地 Codex 中选择同时包含 `macos/` 与 `windows/` 的根目录。现有 Windows 发布包不能代替最新 Mac 源码；Mac 没有签名 App，需原生 arm64 Python 3.11+。Intel Mac 和 Rosetta 下的 x86 Python 不支持。
+从仓库 `main` 分支的 **Code → Download ZIP** 下载并完整解压。在本地 Codex 中选择同时包含 `macos/` 与 `windows/` 的根目录。现有 Windows 发布包不能代替最新 Mac 源码；Mac 没有签名 App，需原生 arm64 或 x86_64 Python 3.11+。Apple Silicon 下通过 Rosetta 运行不支持。
 
 先让 Codex 读取 `macos/README.zh-CN.md`，核对芯片、Python 版本和架构，再检查 BlackHole 2ch 与输入法是否已安装。不要直接套用 Windows 的 EXE、VB-CABLE 或 PowerShell 指令。
 

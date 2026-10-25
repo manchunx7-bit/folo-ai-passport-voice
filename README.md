@@ -2,7 +2,7 @@
 
 按住设备上键说话，松开结束识别，核对文字后短按下键回车。这个项目把 AI Passport 用作电脑的无线麦克风与语音快捷键，文字识别由微信输入法等软件完成。
 
-提供 Windows 客户端与 Apple 芯片 Mac 源码测试客户端。**Mac 实机出字和输入法版本兼容尚未验收**，请先阅读对应平台的要求，再按教程完成实际说话测试。
+提供 Windows 客户端与 macOS 源码测试客户端（支持原生 Apple 芯片 arm64 和 Intel x86_64）。**Mac 实机出字和输入法版本兼容尚未全面验收**，请先阅读对应平台的要求，再按教程完成实际说话测试。
 
 **本仓库只开源随身语音功能，不含整机源码或可刷写固件。** 固件由维护者在 [FoloToy 口袋百宝箱玩法页面](https://ai-passport.folotoy.cn/plays/438/) 发布。该页面若暂未提供包含随身语音的版本，请等待更新；不要把本仓库 Source code ZIP 当固件。
 
@@ -28,10 +28,10 @@
 
 | 平台 | 安装与配置教程 | 软件与启动方式 |
 | --- | --- | --- |
-| **macOS · Apple 芯片** | **[Mac 完整配置教程](macos/README.zh-CN.md)**：下载、Python、BlackHole、权限、快捷键、首次出字及排障 | 从本仓库 main 分支 **Code → Download ZIP** 获取完整源码；原生 arm64 Python 3.11+；`bash macos/start.command` |
+| **macOS · Apple 芯片或 Intel** | **[Mac 完整配置教程](macos/README.zh-CN.md)**：下载、Python、BlackHole、权限、快捷键、首次出字及排障 | 从本仓库 main 分支 **Code → Download ZIP** 获取完整源码；原生 arm64/x86_64 Python 3.11+；`bash macos/start.command` |
 | **Windows 10/11 x64** | **[Windows 完整配置教程](docs/QUICKSTART.zh-CN.md)**：应用包、VB-CABLE、输入法、映射和记事本验收 | [Releases](https://github.com/manchunx7-bit/folo-ai-passport-voice/releases) 下载 `ai-passport-voice-app-0.2.0.zip`；解压后双击 `windows/start.cmd` |
 
-Mac 当前没有签名的 `.app` / `.dmg`，Intel Mac 和 Rosetta 下的 x86 Python 不支持。Windows 现有发布包不包含最新 Mac 客户端；Mac 请保留完整源码中 `macos/` 与 `windows/` 的相对位置。
+Mac 当前没有签名的 `.app` / `.dmg`。Intel Mac 需使用原生 x86_64 Python；Apple 芯片需使用原生 arm64 Python，Rosetta 不支持。Windows 现有发布包不包含最新 Mac 客户端；Mac 请保留完整源码中 `macos/` 与 `windows/` 的相对位置。
 
 ### 两个平台共用的准备
 
@@ -64,7 +64,7 @@ Mac 当前没有签名的 `.app` / `.dmg`，Intel Mac 和 Rosetta 下的 x86 Pyt
 | 目录 | 内容 |
 | --- | --- |
 | `windows/` | 可运行的 Windows 转发器、ADPCM 解码、UDP 通道、诊断与测试 |
-| `macos/` | Apple 芯片 Mac 测试客户端、启动脚本、诊断与模拟接口测试；复用 Windows 目录的协议模块 |
+| `macos/` | macOS 测试客户端、原生架构检查、启动脚本、诊断与模拟接口测试；复用 Windows 目录的协议模块 |
 | `device/main/apps/voice/` | 本功能的设备端状态机、协议、录音生命周期、传输和界面业务代码 |
 | `device/tests/` | 语音状态机和界面数学的可独立运行测试 |
 | `docs/` | 使用、排错、固件入口、开发与底层接口适配说明 |

@@ -4,7 +4,7 @@
 
 ## macOS 源码运行
 
-Apple 芯片 Mac 使用原生 arm64 Python 3.11+，从项目根目录依次运行：
+Intel Mac 使用原生 x86_64 Python，Apple 芯片 Mac 使用原生 arm64 Python；两者均需 Python 3.11+，从项目根目录依次运行：
 
 ```bash
 bash macos/install.command

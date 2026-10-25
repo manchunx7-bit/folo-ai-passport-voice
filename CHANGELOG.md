@@ -1,5 +1,10 @@
 # 更新日志
 
+## 未发布 · macOS Intel 支持 · 2026-10-25
+
+- 合并社区 PR #2：支持 Intel Mac 原生 x86_64 Python 3.11+。
+- 同步安装脚本、客户端、Agent doctor、Mac 教程和源码包元数据；Apple Silicon 下通过 Rosetta 运行会被拒绝。
+
 ## 未发布 · 2026-10-24
 
 - 新增面向 Codex、Claude Code、WorkBuddy 等本地 Agent 的统一配置入口、平台分支、进度续接和真实出字验收流程。

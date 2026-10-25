@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apple Silicon test client; reuses the current Wi-Fi/ADPCM device protocol."""
+"""macOS test client; reuses the current Wi-Fi/ADPCM device protocol."""
 import argparse
 import asyncio
 import ipaddress
@@ -18,6 +18,7 @@ from udp_transport import UdpTransport
 from mac_keys import CODES, MacKeyInjector, QuartzKeyboard, KeyErrorMac, resolve_key_spec
 from mac_audio import make_audio_sink, coreaudio_options
 from mac_network import broadcast_targets
+from platform_support import runtime_error, runtime_supported
 
 
 class MacForwarder(shared.Forwarder):
@@ -89,8 +90,8 @@ def diagnose(args, keyboard_factory=QuartzKeyboard, sd=None):
     print('AI Passport Mac 测试版诊断（不注入按键、不采音、不更改系统音频设置）')
     print('系统：', platform.mac_ver()[0] or sys.platform, '架构：', platform.machine())
     failures = 0
-    if sys.platform != 'darwin' or platform.machine() not in ('arm64', 'x86_64') or sys.version_info < (3, 11):
-        print('[FAIL] 请在原生 arm64/x86_64 Python 3.11+ 运行（勿用 Rosetta）。')
+    if not runtime_supported():
+        print('[FAIL]', runtime_error())
         failures += 1
     try:
         keyboard = keyboard_factory()
@@ -135,7 +136,7 @@ def diagnose(args, keyboard_factory=QuartzKeyboard, sd=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='AI Passport · Apple 芯片 Mac / 微信输入法测试客户端')
+    parser = argparse.ArgumentParser(description='AI Passport · macOS / 微信输入法测试客户端')
     parser.add_argument('--config', default=str(HERE / 'voice-config.json'))
     parser.add_argument('--key')
     parser.add_argument('--mode', choices=['hold', 'tap'])
@@ -168,8 +169,8 @@ def main():
         parser.error(str(error))
     if args.diagnose:
         return diagnose(args)
-    if sys.platform != 'darwin' or platform.machine() not in ('arm64', 'x86_64') or sys.version_info < (3, 11):
-        parser.error('请在原生 arm64/x86_64 Python 3.11+ 中运行')
+    if not runtime_supported():
+        parser.error(runtime_error())
     if args.list_devices:
         try:
             import sounddevice as sd

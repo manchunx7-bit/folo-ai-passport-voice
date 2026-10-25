@@ -1,6 +1,6 @@
 # Windows 配置教程：AI Passport 随身语音
 
-**使用 Mac？请转到 [macOS 完整配置教程](../macos/README.zh-CN.md)**，包含 Apple 芯片检查、BlackHole、系统权限和首次出字；不要在 Mac 上照本页安装 Windows EXE 或 VB-CABLE。
+**使用 Mac？请转到 [macOS 完整配置教程](../macos/README.zh-CN.md)**，包含 Apple 芯片 / Intel 架构检查、BlackHole、系统权限和首次出字；不要在 Mac 上照本页安装 Windows EXE 或 VB-CABLE。
 
 目标是：**按住 AI Passport 上键，对着设备说话，松开后电脑输入框出现文字；核对后短按下键回车。**
 教程以 Windows 10/11 x64 + 微信输入法为例。使用语音应用包里的 EXE，不需要 Python 或 ASR API Key。

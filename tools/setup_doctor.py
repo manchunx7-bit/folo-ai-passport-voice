@@ -13,6 +13,19 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def mac_runtime_supported(system, architecture):
+    if system != 'Darwin':
+        return False
+    macos_path = str(ROOT / 'macos')
+    if macos_path not in sys.path:
+        sys.path.insert(0, macos_path)
+    try:
+        from platform_support import runtime_supported
+    except ImportError:
+        return architecture in ('arm64', 'x86_64') and sys.version_info >= (3, 11)
+    return runtime_supported(system=system, architecture=architecture)
+
+
 def check(name, status, detail, next_action=''):
     return dict(id=name, status=status, detail=detail, next_action=next_action)
 
@@ -89,13 +102,14 @@ def audio_check(config, system, sd=None):
 def collect(root=ROOT, config_path=None, system=None):
     system = system or platform.system()
     checks = []
+    architecture = platform.machine()
     supported = (system == 'Windows' and sys.maxsize > 2 ** 32
-                 and platform.machine().lower() in ('amd64', 'x86_64')) or (
-                     system == 'Darwin' and platform.machine() == 'arm64')
+                 and architecture.lower() in ('amd64', 'x86_64')) or (
+                     mac_runtime_supported(system, architecture))
     checks.append(check('runtime', 'PASS' if supported and sys.version_info >= (3, 11) else 'FAIL',
                         dict(os=system, architecture=platform.machine(),
                              python=platform.python_version()),
-                        'Source client needs Python 3.11+ on Windows x64 or native Apple Silicon.'))
+                        'Source client needs Python 3.11+ on Windows x64 or native macOS arm64/x86_64.'))
     try:
         config, exists = read_config(root, system, config_path)
         for folder in ('windows', 'macos'):
