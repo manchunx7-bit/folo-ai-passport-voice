@@ -29,13 +29,26 @@ def make_audio_sink(shared, device_substr, sd=None, start_thread=True):
             self._closing = threading.Event()
             self._thread = None
             self._stream = None
+            self._device_substr = device_substr
+            self._sd_module = sd
+            self._init_ok = False
+            self._try_init(start_thread)
+            if not self._init_ok:
+                # 2026-10-26: 初始化失败不再永久失败——后台重连（系统切音频/AirPods插拔
+                # 等导致 CoreAudio 设备列表瞬时不稳时，数秒后重试即可恢复）
+                retry = threading.Thread(target=self._retry_loop, args=(start_thread,),
+                                         name='mac_audio_retry', daemon=True)
+                retry.start()
+
+        def _try_init(self, start_thread):
+            """尝试打开 BlackHole 输出流。成功置 _init_ok/enabled=True，失败打印 stderr。"""
             try:
-                module = sd
+                module = self._sd_module
                 if module is None:
                     import sounddevice as module
                 devices = module.query_devices()
                 for index, device in enumerate(devices):
-                    if device['max_output_channels'] < 2 or device_substr.lower() not in device['name'].lower():
+                    if device['max_output_channels'] < 2 or self._device_substr.lower() not in device['name'].lower():
                         continue
                     stream = None
                     try:
@@ -50,10 +63,11 @@ def make_audio_sink(shared, device_substr, sd=None, start_thread=True):
                             stream.close()
                         self.fault = str(error)
                 if self._stream is None:
-                    raise RuntimeError(self.fault or f'没有可用的双声道输出：{device_substr}；请安装 BlackHole 2ch')
+                    raise RuntimeError(self.fault or f'没有可用的双声道输出：{self._device_substr}；请安装 BlackHole 2ch')
                 self.fault = ''
                 self.enabled = True
-                if start_thread:
+                self._init_ok = True
+                if start_thread and (self._thread is None or not self._thread.is_alive()):
                     self._thread = threading.Thread(target=self._writer, name='mac_audio', daemon=True)
                     self._thread.start()
             except Exception as error:
@@ -65,7 +79,17 @@ def make_audio_sink(shared, device_substr, sd=None, start_thread=True):
                     except Exception:
                         pass
                     self._stream = None
-                print(f'[audio] Mac 音频通道未就绪：{error}', file=sys.stderr)
+                print(f'[audio] Mac 音频通道未就绪：{error}（每 3s 自动重试）', file=sys.stderr)
+
+        def _retry_loop(self, start_thread):
+            """初始化失败时的后台重连：每 3s 重试，直到成功或 close()。"""
+            import time
+            while not self._closing.is_set() and not self._init_ok:
+                time.sleep(3)
+                if self._closing.is_set() or self._init_ok:
+                    return
+                print('[audio] 重试连接 BlackHole…', file=sys.stderr)
+                self._try_init(start_thread)
 
         def _writer(self):
             while not self._closing.is_set():
@@ -80,9 +104,18 @@ def make_audio_sink(shared, device_substr, sd=None, start_thread=True):
                         self._stream.write(stereo_pcm(data))
                 except Exception as error:
                     self.enabled = False
+                    self._init_ok = False
                     self.fault = str(error)
                     self.clear()
-                    print(f'[audio] Mac 声卡写入失败：{error}', file=sys.stderr)
+                    print(f'[audio] Mac 声卡写入失败：{error}（转入自动重连）', file=sys.stderr)
+                    try:
+                        if self._stream:
+                            self._stream.close()
+                    except Exception:
+                        pass
+                    self._stream = None
+                    threading.Thread(target=self._retry_loop, args=(True,),
+                                     name='mac_audio_retry', daemon=True).start()
                     return
                 finally:
                     if queued:
